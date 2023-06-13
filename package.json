@@ -1,0 +1,19 @@
+{
+  "name": "trakka-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon ./src/app.ts",
+    "start": "node ./dist/app.ts",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.3"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
