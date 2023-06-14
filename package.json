@@ -1,7 +1,7 @@
 {
   "name": "trakka-api",
   "version": "1.0.0",
-  "main": "app.ts",
+  "main": "index.js",
   "license": "MIT",
   "scripts": {
     "dev": "nodemon ./src/app.ts",
@@ -9,7 +9,9 @@
     "build": "tsc"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.13",
+    "@types/express-fileupload": "^1.4.1",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3"
