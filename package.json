@@ -1,11 +1,11 @@
 {
   "name": "trakka-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.ts",
   "license": "MIT",
   "scripts": {
     "dev": "nodemon ./src/app.ts",
-    "start": "node ./dist/app.ts",
+    "start": "node ./dist/app.js",
     "build": "tsc"
   },
   "devDependencies": {
