@@ -1,10 +1,10 @@
-import {Request, Response} from 'express'
+import { Request, Response } from 'express'
 import User from '../models/User'
 import cloudinary from 'cloudinary'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
-export const signup = async (req: Request & { files?: any },  res: Response) => {
+export const signup = async (req: Request & { files?: any }, res: Response) => {
     try {
         const { fullname, username, emailAddress, password, accountBalance = 0 } = req.body
         if (!fullname) {
@@ -52,6 +52,46 @@ export const signup = async (req: Request & { files?: any },  res: Response) => 
         const token = jwt.sign({ _id: user._id, fullname, username, emailAddress, avatar, accountBalance }, process.env.JWT_SECRET as string)
 
         res.status(201).json({ message: 'Account created successfully', token })
+
+    } catch (error: any) {
+        console.log(error.message)
+        res.status(500).json({ message: 'Something went wrong' })
+    }
+}
+
+export const login = async (req: Request, res: Response) => {
+    try {
+        const { username, emailAddress, password } = req.body
+        if (!username && !emailAddress) {
+            return res.status(400).json({ message: 'Username or email address is required' })
+        }
+
+        if (emailAddress) {
+            if (!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailAddress))) {
+                return res.status(400).json({ message: 'Invalid email address' })
+            }
+        }
+        if (!password) {
+            return res.status(400).json({ message: 'Password is required' })
+        }
+
+        let user: any = null  
+
+        if(username){
+            user = await User.findOne({username}).select('+password')
+        }else{
+            user = await User.findOne({emailAddress}).select('+password')
+        }
+
+        const passwordMatched = await bcrypt.hash(password, user?.password)
+
+        if(!passwordMatched){
+            return res.status(400).json({message: 'Invalid credentials'})
+        }
+
+        const token = jwt.sign({ _id: user._id, fullname : user.fullname, username: user.username, emailAddress: user.emailAddress, avatar: user.avatar, accountBalance: user.accountBalance }, process.env.JWT_SECRET as string)
+
+        res.status(200).json({token })
 
     } catch (error: any) {
         console.log(error.message)
