@@ -6,7 +6,7 @@ export const getTransactions = async (req: Request & { user?: any }, res: Respon
     try {
         const transactions = await Transaction.find({ user: req.user._id })
 
-        res.status(200).json({ transactions })
+        res.status(200).json({ transactions, accountBalance: req.user.accountBalance, incomeAmount: req.user.incomeAmount, expensesAmount: req.user.expensesAmount })
 
     } catch (error: any) {
         console.log(error.message)
@@ -16,7 +16,7 @@ export const getTransactions = async (req: Request & { user?: any }, res: Respon
 
 export const addTransaction = async (req: Request & { user?: any }, res: Response) => {
     try {
-        const { amount, type, category, date } = req.body
+        const { amount, type, category, date , description} = req.body
         if (!amount) {
             return res.status(400).json({ message: 'Amount is required' })
         }
@@ -46,14 +46,14 @@ export const addTransaction = async (req: Request & { user?: any }, res: Respons
         }
         if (type == 'expenses') {
             const formerBal = user?.accountBalance
-            const formerIncomeBal = user.expensesAmount
+            const formerExpensesAmount = user.expensesAmount
             user.accountBalance = formerBal - amount
-            user.incomeAmount = formerIncomeBal - amount
+            user.expensesAmount = formerExpensesAmount + amount
         }
 
         await user.save()
 
-        const transaction = await Transaction.create({ user: req.user._id, amount, type, category, date })
+        const transaction = await Transaction.create({ user: req.user._id, amount, type, category, date, description: description ? description : '' })
 
         return res.status(201).json({ message: 'Transaction added successfully', transaction })
 
