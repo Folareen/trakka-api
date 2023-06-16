@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import express from 'express'
+import express, { Request, Response } from 'express'
 import cors from 'cors'
 import authRouter from './routes/auth'
 import cloudinary from 'cloudinary'
@@ -27,7 +27,7 @@ app.use(fileUpload({
     tempFileDir: '/tmp'
 }))
 
-app.use('/api/v1/', authRouter)
+app.use('/api/v1', authRouter)
 
 app.use(notFound)
 
