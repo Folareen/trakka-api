@@ -3,10 +3,10 @@ import { Schema, model } from "mongoose"
 const UserSchema = new Schema({
     fullname: {
         type: String,
-        required:true,
+        required: true,
         trim: true
     },
-    username:{
+    username: {
         type: String,
         unique: true,
         required: true,
@@ -35,9 +35,16 @@ const UserSchema = new Schema({
         type: Number,
         default: 0
     },
-    expensesAmount:{
+    expensesAmount: {
         type: Number,
         default: 0
+    }, passwordResetToken: {
+        type: String,
+    }, passwordResetTokenUsed: {
+        type: Boolean,
+        default: false
+    }, passwordResetTokenExpiry: {
+        type: Date
     }
 })
 
