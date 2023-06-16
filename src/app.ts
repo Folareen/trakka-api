@@ -27,7 +27,7 @@ app.use(fileUpload({
     tempFileDir: '/tmp'
 }))
 
-app.use('/api/v1', authRouter)
+app.use('/api/v1/', authRouter)
 
 app.use(notFound)
 
