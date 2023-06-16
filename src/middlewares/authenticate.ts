@@ -31,4 +31,4 @@ const authenticate = async (req: Request & {user: any}, res : Response, next : N
 
 }
 
-module.exports = authenticate
+export default authenticate
