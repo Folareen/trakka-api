@@ -6,6 +6,8 @@ import cloudinary from 'cloudinary'
 import connectToDB from './utils/connectToDB'
 import fileUpload from 'express-fileupload'
 import notFound from './middlewares/notFound'
+import authenticate from './middlewares/authenticate'
+import transactionRouter from './routes/transaction'
 
 
 dotenv.config()
@@ -28,6 +30,7 @@ app.use(fileUpload({
 }))
 
 app.use('/api/v1', authRouter)
+app.use('/api/v1/transaction', authenticate, transactionRouter)
 
 app.use(notFound)
 
