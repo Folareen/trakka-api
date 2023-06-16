@@ -165,3 +165,25 @@ export const editTransaction = async (req: Request & { user?: any }, res: Respon
         res.status(500).json({ message: 'Something went wrong' })
     }
 }
+
+export const deleteTransaction = async (req: Request & {user?: any}, res: Response) => {
+    try {
+        const { id } = req.params
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(404).json({ message: 'Transaction not found' })
+        }
+        const transaction: any = await Transaction.findById(id)
+
+        if (String(transaction.user) != req.user._id) {
+            return res.status(404).json({ message: 'Transaction not found' })
+        }
+
+        await transaction.delete()
+
+        res.status(200).json({message: 'Transaction deleted successfully'})
+
+    } catch (error: any) {
+        console.log(error.message)
+        res.status(500).json({ message: 'Something went wrong' })
+    }
+}
