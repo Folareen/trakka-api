@@ -1,9 +1,9 @@
 import express from 'express'
-import { addTransaction, getTransaction, getTransactions } from '../controllers/transaction'
+import { addTransaction, editTransaction, getTransaction, getTransactions } from '../controllers/transaction'
 
 const router = express.Router()
 
 router.route('/').get(getTransactions).post(addTransaction)
-router.route('/:id').get(getTransaction)
+router.route('/:id').get(getTransaction).patch(editTransaction)
 
 export default router
