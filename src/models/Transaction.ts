@@ -8,12 +8,16 @@ const TransactionSchema = new Schema({
     }, amount: {
         type: Number,
         required: true
-    }, transactionType: {
+    }, type: {
         type: String,
         required: true
-    }, transactionCategory: {
+    }, category: {
         type: String,
-        required: true
+        required: true,
+    }, date: {
+        type: Date,
+        required: true,
+        default: Date.now()
     }
 }, { timestamps: true })
 
