@@ -87,8 +87,14 @@ export const editTransaction = async (req: Request & { user?: any }, res: Respon
     try {
         const { amount, type, category, date, description } = req.body
         const { id } = req.params
-
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(404).json({ message: 'Transaction not found' })
+        }
         const transaction: any = await Transaction.findById(id)
+
+        if (String(transaction.user) != req.user._id) {
+            return res.status(404).json({ message: 'Transaction not found' })
+        }
 
         const user: any = await User.findOne({ _id: req.user._id })
 
