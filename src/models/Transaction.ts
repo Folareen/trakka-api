@@ -14,7 +14,11 @@ const TransactionSchema = new Schema({
     }, category: {
         type: String,
         required: true,
-    }, date: {
+    }, description: {
+        type: String,
+        default: ''
+    },
+    date: {
         type: Date,
         required: true,
         default: Date.now()
