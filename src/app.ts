@@ -5,6 +5,7 @@ import authRouter from './routes/auth'
 import cloudinary from 'cloudinary'
 import connectToDB from './utils/connectToDB'
 import fileUpload from 'express-fileupload'
+import notFound from './middlewares/notFound'
 
 
 dotenv.config()
@@ -27,6 +28,8 @@ app.use(fileUpload({
 }))
 
 app.use('/api/v1', authRouter)
+
+app.use(notFound)
 
 const PORT = process.env.PORT || 5000
 
