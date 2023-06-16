@@ -117,19 +117,16 @@ export const editTransaction = async (req: Request & { user?: any }, res: Respon
             return res.status(400).json({ message: 'Invalid type' })
         }
 
-        console.log(transaction.amount, 'na ham na ham')
 
         if (type == 'income') {
             const formerBal = user.accountBalance
             const formerIncomeBal = user.incomeAmount
             const formerExpensesAmount = user.expensesAmount
-            console.log(formerBal, formerIncomeBal, formerExpensesAmount)
             if (transaction.type == 'expenses') {
                 user.accountBalance = formerBal + amount + amount
                 user.incomeAmount = formerIncomeBal + amount
                 user.expensesAmount = formerExpensesAmount - amount
             } else {
-                console.log(formerBal + (amount - transaction.amount), formerBal, amount, transaction.amount)
                 user.accountBalance = formerBal + (amount - transaction.amount)
                 user.incomeAmount = formerIncomeBal + (amount - transaction.amount)
             }
