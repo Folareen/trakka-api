@@ -1,8 +1,8 @@
 import express from 'express'
-import { getTransactions } from '../controllers/transaction'
+import { addTransaction, getTransactions } from '../controllers/transaction'
 
 const router = express.Router()
 
-router.route('/').get(getTransactions)
+router.route('/').get(getTransactions).post(addTransaction)
 
 export default router
