@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import mongoose, { AnyArray } from "mongoose";
 import Transaction from "../models/Transaction";
 import User from "../models/User";
 
@@ -16,7 +17,7 @@ export const getTransactions = async (req: Request & { user?: any }, res: Respon
 
 export const addTransaction = async (req: Request & { user?: any }, res: Response) => {
     try {
-        const { amount, type, category, date , description} = req.body
+        const { amount, type, category, date, description } = req.body
         if (!amount) {
             return res.status(400).json({ message: 'Amount is required' })
         }
@@ -57,6 +58,25 @@ export const addTransaction = async (req: Request & { user?: any }, res: Respons
 
         return res.status(201).json({ message: 'Transaction added successfully', transaction })
 
+    } catch (error: any) {
+        console.log(error.message)
+        res.status(500).json({ message: 'Something went wrong' })
+    }
+}
+
+export const getTransaction = async (req: Request & {user?: any}, res: Response) => {
+    try {
+        const { id } = req.params
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(404).json({message: 'Transaction not found'})
+        }
+        const transaction: any = await Transaction.findById(id)
+
+        if(String(transaction.user) != req.user._id){
+            return res.status(404).json({message: 'Transaction not found'})
+        }
+
+        return res.status(200).json({ transaction })
     } catch (error: any) {
         console.log(error.message)
         res.status(500).json({ message: 'Something went wrong' })
