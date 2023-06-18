@@ -12,6 +12,7 @@
     "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.13",
     "@types/express-fileupload": "^1.4.1",
+    "@types/jsonwebtoken": "^9.0.2",
     "@types/nodemailer": "^6.4.8",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
@@ -28,7 +29,7 @@
     "mongoose": "^7.2.4",
     "nodemailer": "^6.9.3"
   },
-   "engines": {
+  "engines": {
     "node": ">=14.20.1"
   }
 }
