@@ -166,7 +166,7 @@ export const editTransaction = async (req: Request & { user?: any }, res: Respon
     }
 }
 
-export const deleteTransaction = async (req: Request & {user?: any}, res: Response) => {
+export const deleteTransaction = async (req: Request & { user?: any }, res: Response) => {
     try {
         const { id } = req.params
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -174,13 +174,26 @@ export const deleteTransaction = async (req: Request & {user?: any}, res: Respon
         }
         const transaction: any = await Transaction.findById(id)
 
+
         if (String(transaction.user) != req.user._id) {
             return res.status(404).json({ message: 'Transaction not found' })
         }
 
-        await transaction.delete()
+        const user: any = await User.findById(req.user._id)
 
-        res.status(200).json({message: 'Transaction deleted successfully'})
+        if (transaction.type == 'income') {
+            user.incomeAmount = req.user.incomeAmount - transaction.amount
+            user.accountBalance = req.user.accountBalance - transaction.amount
+        }
+        if (transaction.type == 'expenses') {
+            user.expensesAmount = req.user.expensesAmount - transaction.amount
+            user.accountBalance = req.user.accountBalance + transaction.amount
+        }
+
+        await Transaction.deleteOne({_id: transaction._id})
+        await user.save()
+
+        res.status(200).json({ message: 'Transaction deleted successfully' })
 
     } catch (error: any) {
         console.log(error.message)
