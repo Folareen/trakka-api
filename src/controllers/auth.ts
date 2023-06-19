@@ -50,7 +50,7 @@ export const signup = async (req: Request & { files?: any }, res: Response) => {
             fullname, username, emailAddress, password: hashedPassword, avatar, accountBalance
         })
 
-        const token = jwt.sign({ _id: user._id, fullname, username, emailAddress, avatar, accountBalance }, process.env.JWT_SECRET as string)
+        const token = jwt.sign({ _id: user._id, fullname: user.fullname, username : user.fullname, emailAddress: user.emailAddress, avatar : user.avatar, accountBalance : user.accountBalance, incomeAmount: user.incomeAmount, expensesAmount: user.expensesAmount }, process.env.JWT_SECRET as string)
 
         res.status(201).json({ message: 'Account created successfully', token })
 
@@ -90,7 +90,7 @@ export const login = async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'Invalid credentials' })
         }
 
-        const token = jwt.sign({ _id: user._id, fullname: user.fullname, username: user.username, emailAddress: user.emailAddress, avatar: user.avatar, accountBalance: user.accountBalance }, process.env.JWT_SECRET as string)
+        const token = jwt.sign({ _id: user._id, fullname: user.fullname, username: user.username, emailAddress: user.emailAddress, avatar: user.avatar, accountBalance: user.accountBalance, incomeAmount: user.incomeAmount, expensesAmount: user.expensesAmount }, process.env.JWT_SECRET as string)
 
         res.status(200).json({ token })
 
