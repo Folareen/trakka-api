@@ -1,11 +1,31 @@
 import { Request, Response } from "express";
-import mongoose, { AnyArray } from "mongoose";
+import mongoose from "mongoose";
 import Transaction from "../models/Transaction";
 import User from "../models/User";
 
 export const getTransactions = async (req: Request & { user?: any }, res: Response) => {
     try {
-        const transactions = await Transaction.find({ user: req.user._id })
+        const { recent, type, month } = req.query
+
+        let transactions: any = null
+
+        if (recent != undefined) {
+            transactions = await Transaction.find({ ...(['income', 'expenses'].includes(type as string) && { type }), user: req.user._id }).sort({ date: -1 }).limit(5)
+
+        } else {
+
+            if (month) {
+                transactions = await Transaction.find({
+                    ...(['income', 'expenses'].includes(type as string) && { type }), user: req.user._id, $expr: {
+                        $eq: [{ $month: '$date' }, month]
+                    }
+                }).sort({ date: -1 })
+
+            } else {
+                transactions = await Transaction.find({ ...(['income', 'expenses'].includes(type as string) && { type }), user: req.user._id }).sort({ date: -1 })
+            }
+
+        }
 
         res.status(200).json({ transactions, accountBalance: req.user.accountBalance, incomeAmount: req.user.incomeAmount, expensesAmount: req.user.expensesAmount })
 
@@ -190,7 +210,7 @@ export const deleteTransaction = async (req: Request & { user?: any }, res: Resp
             user.accountBalance = req.user.accountBalance + transaction.amount
         }
 
-        await Transaction.deleteOne({_id: transaction._id})
+        await Transaction.deleteOne({ _id: transaction._id })
         await user.save()
 
         res.status(200).json({ message: 'Transaction deleted successfully' })
