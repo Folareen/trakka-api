@@ -5,7 +5,7 @@ import User from "../models/User";
 
 export const getTransactions = async (req: Request & { user?: any }, res: Response) => {
     try {
-        const { recent, type, month } = req.query
+        const { recent, type, month, stat } = req.query
 
         let transactions: any = null
 
@@ -15,11 +15,67 @@ export const getTransactions = async (req: Request & { user?: any }, res: Respon
         } else {
 
             if (month) {
-                transactions = await Transaction.find({
-                    ...(['income', 'expenses'].includes(type as string) && { type }), user: req.user._id, $expr: {
-                        $eq: [{ $month: '$date' }, month]
-                    }
-                }).sort({ date: -1 })
+
+                if (stat != undefined) {
+
+                    // transactions = await Transaction.find({
+                    //     user: req.user._id, $expr: {
+                    //         $eq: [{ $month: '$date' }, month]
+                    //     }
+                    // }).sort({ date: -1 })
+
+                    const expenses = await Transaction.find({
+                        type: 'expenses', user: req.user._id, $expr: {
+                            $eq: [{ $month: '$date' }, month]
+                        },
+                    })
+                    const expensesCategories = expenses.map((exp) => exp.category)
+                    const expensesCategoriesAmounts: any = {}
+                    expensesCategories.forEach((cgy) => {
+                        const cgyObj = expenses.find((_) => cgy == _.category)
+                        expensesCategoriesAmounts[cgy] = (expensesCategoriesAmounts[cgy] || 0) + (cgyObj?.amount || 0)
+                    })
+                    let expensesAmount = 0
+                    expenses.forEach((expense) => {
+                        expensesAmount += expense.amount
+                    })
+
+                    const income = await Transaction.find({
+                        type: 'income', user: req.user._id, $expr: {
+                            $eq: [{ $month: '$date' }, month]
+                        },
+                    })
+                    const incomeCategories = income.map((exp) => exp.category)
+                    const incomeCategoriesAmounts: any = {}
+                    incomeCategories.forEach((cgy) => {
+                        const cgyObj = income.find((_) => cgy == _.category)
+                        incomeCategoriesAmounts[cgy] = (incomeCategoriesAmounts[cgy] || 0) + (cgyObj?.amount || 0)
+                    })
+                    let incomeAmount = 0
+                    income.forEach((inc) => {
+                        incomeAmount += inc.amount
+                    })
+
+
+                    return res.status(200).json({
+                        income:
+                        {
+                            categories: incomeCategories, stat: incomeCategoriesAmounts, total: incomeAmount
+                        },
+                        expenses:
+                        {
+                            categories: expensesCategories, stat: expensesCategoriesAmounts, total: expensesAmount
+                        },
+                    })
+
+                } else {
+
+                    transactions = await Transaction.find({
+                        ...(['income', 'expenses'].includes(type as string) && { type }), user: req.user._id, $expr: {
+                            $eq: [{ $month: '$date' }, month]
+                        }
+                    }).sort({ date: -1 })
+                }
 
             } else {
                 transactions = await Transaction.find({ ...(['income', 'expenses'].includes(type as string) && { type }), user: req.user._id }).sort({ date: -1 })
